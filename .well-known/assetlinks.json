@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.franckbatta.twa",
+        "sha256_cert_fingerprints": ["5B:EC:4D:AA:4F:33:8C:4C:E2:26:7C:57:CA:6E:D3:1D:2A:79:B6:5D:7A:B5:2F:68:6B:39:4F:D8:1F:06:A6:DE"]
+      }
+    }]
