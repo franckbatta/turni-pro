@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turni Pro</title> :
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<style>
+  :root {
+    --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --sub: #64748b;
+    --cell: #f8fafc; --border: #e2e8f0; --inp-bg: #ffffff; --inp-bd: #cbd5e1;
+    --nav-btn: #e2e8f0; --fest-bg: #fef2f2;
+  }
+  body.dark {
+    --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --sub: #94a3b8;
+    --cell: #0f172a; --border: #334155; --inp-bg: #0f172a; --inp-bd: #475569;
+    --nav-btn: #334155; --fest-bg: #450a0a;
+  }
+  body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); padding-bottom: 30px; transition: background 0.2s, color 0.2s; }
+  .top { background: #2563eb; color: #fff; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+  .top-btns { display: flex; gap: 6px; }
+  .top button { background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  .box { max-width: 480px; margin: 12px auto; padding: 0 10px; }
+  .card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .stat { background: var(--cell); padding: 8px; border-radius: 8px; border: 1px solid var(--border); font-weight: bold; font-size: 16px; color: #3b82f6; }
+  .stat span { display: block; font-size: 11px; color: var(--sub); }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; text-transform: capitalize; }
+  .nav button { width: 34px; height: 34px; border-radius: 50%; border: none; background: var(--nav-btn); color: var(--text); cursor: pointer; font-weight: bold; }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+  .dow { font-size: 11px; font-weight: bold; color: var(--sub); }
+  .cell { min-height: 54px; border-radius: 8px; padding: 4px 2px; background: var(--cell); border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .empty { background: transparent; border: none; cursor: default; }
+  .fest { border: 1.5px solid #ef4444; background: var(--fest-bg); color: #ef4444; }
+  .pill { font-size: 11px; font-weight: bold; color: #fff; padding: 2px 5px; border-radius: 4px; width: 85%; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+  .ext { font-size: 9px; font-weight: bold; color: #2563eb; background: #dbeafe; padding: 1px 4px; border-radius: 4px; }
+  label { display: block; font-size: 12px; font-weight: bold; margin-top: 8px; color: var(--text); }
+  input, select, .btn { width: 100%; padding: 9px; margin-top: 4px; border-radius: 8px; border: 1px solid var(--inp-bd); background: var(--inp-bg); color: var(--text); box-sizing: border-box; }
+  input[type="color"] { padding: 2px; height: 38px; cursor: pointer; }
+  .col-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-top: 4px; }
+  .col-grid span { font-size: 11px; font-weight: bold; color: var(--sub); }
+  .btn { background: #2563eb; color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+  .modal { background: var(--card); color: var(--text); padding: 18px; border-radius: 12px; width: 85%; max-width: 320px; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span>Turni Pro</span>
+  <div class="top-btns">
+    <button id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <button onclick="toggleSet()">Impostazioni</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="card" id="setBox">
+    <label>Schema rotazione:</label>
+    <input type="text" id="sc" value="6 1T, 1 R, 4 3T, 2 R, 3 2T, 2 R, 5 1T, 2 R, 3 3T, 2 R">
+    <label>Data inizio ciclo:</label>
+    <input type="date" id="sd" value="2026-11-02">
+    <label>Orari 1T / 2T / 3T:</label>
+    <div style="display:flex;gap:5px;">
+      <input type="text" id="o1" value="07:00-15:00">
+      <input type="text" id="o2" value="15:00-23:00">
+      <input type="text" id="o3" value="23:00-07:00">
+    </div>
+    <label>Colori personalizzati:</label>
+    <div class="col-grid">
+      <div><span>1T</span><input type="color" id="c1" value="#10b981" onchange="aggiornaColori()"></div>
+      <div><span>2T</span><input type="color" id="c2" value="#f59e0b" onchange="aggiornaColori()"></div>
+      <div><span>3T</span><input type="color" id="c3" value="#475569" onchange="aggiornaColori()"></div>
+      <div><span>R</span><input type="color" id="cR" value="#94a3b8" onchange="aggiornaColori()"></div>
+    </div>
+    <button class="btn" onclick="genera()">Genera 12 Mesi</button>
+  </div>
+
+  <div id="mainView" style="display:none;">
+    <div class="card stats">
+      <div class="stat" id="sOrd">0h<span>Ordinarie</span></div>
+      <div class="stat" id="sExt">0h<span>Extra</span></div>
+      <div class="stat" id="sFest" style="color:#ef4444">0h<span>Festive</span></div>
+    </div>
+    <div class="card">
+      <div class="nav"><button onclick="step(-1)">&lt;</button><span id="mTitle"></span><button onclick="step(1)">&gt;</button></div>
+      <div class="grid"><div class="dow">L</div><div class="dow">M</div><div class="dow">M</div><div class="dow">G</div><div class="dow">V</div><div class="dow">S</div><div class="dow">D</div></div>
+      <div class="grid" id="grid" style="margin-top:6px;"></div>
+    </div>
+    <button class="btn" style="background:#10b981;color:#fff;" onclick="esporta()">Esporta su Google / iPhone (.ics)</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="mBg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <h4 id="mData" style="margin:0;"></h4>
+    <div id="mFest" style="color:#ef4444;font-size:12px;font-weight:bold;"></div>
+    <label>Turno:</label>
+    <select id="mTipo"><option value="1T">1T</option><option value="2T">2T</option><option value="3T">3T</option><option value="R">R</option></select>
+    <label>Ore Extra:</label>
+    <input type="number" id="mExt" min="0" max="12" step="0.5">
+    <button class="btn" onclick="salvaMod()">Salva</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>
