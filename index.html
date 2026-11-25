@@ -51,7 +51,7 @@
 <body>
 
 <div class="top">
-  <span>Turni Pro</span>
+  <span onclick="this.c=(this.c||0)+1;if(this.c===10){this.c=0;let u=localStorage.getItem('tpUnlocked')==='true';localStorage.setItem('tpUnlocked',!u);alert(!u?'Modalità Test Sbloccata':'Modalità Prova Ripristinata');location.reload();}">Turni Pro</span>
   <div class="top-btns">
     <button onclick="document.getElementById('helpBg').style.display='flex'">?</button>
     <button id="themeBtn" onclick="toggleTheme()">🌙</button>
