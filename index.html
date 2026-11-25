@@ -63,14 +63,22 @@
   <div class="card" id="setBox">
     <label>Schema rotazione:</label>
     <input type="text" id="sc" value="6 1T, 1 R, 4 3T, 2 R, 3 2T, 2 R, 5 1T, 2 R, 3 3T, 2 R">
-    <label>Data inizio ciclo:</label>
-    <input type="date" id="sd" value="2026-11-02">
+    <label>Data inizio ciclo e Durata:</label>
+    <div style="display:flex;gap:6px;">
+      <input type="date" id="sd" value="2026-11-02" style="flex:1;">
+      <select id="durata" style="flex:1;">
+        <option value="30">1 Mese (30 gg)</option>
+        <option value="182">6 Mesi (182 gg)</option>
+        <option value="365" selected>1 Anno (365 gg)</option>
+      </select>
+    </div>
     <label>Orari 1T / 2T / 3T:</label>
     <div style="display:flex;gap:5px;">
       <input type="text" id="o1" value="07:00-15:00">
       <input type="text" id="o2" value="15:00-23:00">
       <input type="text" id="o3" value="23:00-07:00">
     </div>
+
     <label>Colori personalizzati:</label>
     <div class="col-grid">
       <div><span>1T</span><input type="color" id="c1" value="#10b981" onchange="aggiornaColori()"></div>
