@@ -104,6 +104,19 @@
   </div>
 </div>
 
+<div id="trialBanner" style="background:#fef3c7;color:#92400e;text-align:center;font-size:12px;font-weight:bold;padding:6px;display:none;"></div>
+
+<div class="modal-bg" id="lockBg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="text-align:center;">
+    <h3 style="margin:0 0 8px 0;">🔒 Periodo di prova terminato</h3>
+    <p style="font-size:13px;line-height:1.4;">I tuoi 7 giorni di prova gratuita sono scaduti. L'app è ora in modalità sola lettura.</p>
+    <p style="font-size:13px;line-height:1.4;">Sblocca <strong>Turni Pro</strong> per sempre (pagamento unico, nessun abbonamento) per modificare turni, inserire straordinari ed esportare su Google e Apple Calendar.</p>
+    <button class="btn" style="background:#10b981;" onclick="avviaAcquisto()">Sblocca Versione Completa (2,99 €)</button>
+    <button class="btn" style="background:#64748b;margin-top:6px;" onclick="document.getElementById('lockBg').style.display='none'">Continua in sola lettura</button>
+  </div>
+</div>
+
+
 <script src="app.js"></script>
 <script>
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");

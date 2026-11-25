@@ -1,5 +1,29 @@
 let dati = [], mesi = [], mIdx = 0, cur = -1;
 
+function isExpired() {
+  if (localStorage.getItem("tpUnlocked") === "true") return false;
+  let start = localStorage.getItem("tpTrialStart");
+  if (!start) { start = Date.now(); localStorage.setItem("tpTrialStart", start); }
+  const giorni = (Date.now() - Number(start)) / (1000 * 60 * 60 * 24);
+  return giorni > 7;
+}
+
+function aggiornaBannerProva() {
+  const b = document.getElementById("trialBanner");
+  if (!b) return;
+  if (localStorage.getItem("tpUnlocked") === "true") { b.style.display = "none"; return; }
+  let start = Number(localStorage.getItem("tpTrialStart") || Date.now());
+  let rimasti = Math.ceil(7 - (Date.now() - start) / (1000 * 60 * 60 * 24));
+  b.style.display = "block";
+  b.innerText = rimasti > 0 ? "Prova gratuita attiva: " + rimasti + " giorni rimasti" : "Prova scaduta: modalità sola lettura";
+}
+
+function avviaAcquisto() {
+  // Qui collegheremo il pagamento nativo Google Play / Apple StoreKit
+  alert("Collegamento allo Store per lo sblocco definitivo (2,99 €).");
+}
+
+
 function parseSchema(t) {
   let s = [];
   for (let p of t.toUpperCase().split(",")) {
@@ -45,6 +69,8 @@ function toggleTheme() {
 }
 
 window.onload = () => {
+  isExpired();
+  aggiornaBannerProva();
   if (localStorage.getItem("tpTheme") === "dark") {
     document.body.classList.add("dark");
     document.getElementById("themeBtn").innerText = "☀️";
@@ -82,6 +108,7 @@ function toggleSet() {
 }
 
 function genera() {
+  if (isExpired()) { document.getElementById("lockBg").style.display = "flex"; return; }
   const ciclo = parseSchema(document.getElementById("sc").value);
   if (!ciclo) return alert("Schema non valido! Usa il formato: 6 1T, 1 R, 4 3T...");
   const [y, m, g] = document.getElementById("sd").value.split("-").map(Number);
@@ -131,6 +158,7 @@ function draw() {
 }
 
 function openMod(i) {
+  if (isExpired()) { document.getElementById("lockBg").style.display = "flex"; return; }
   cur = i;
   const t = dati[i];
   document.getElementById("mData").innerText = t.d + "/" + (t.m+1) + "/" + t.y;
@@ -149,6 +177,7 @@ function salvaMod() {
 }
 
 function esporta() {
+  if (isExpired()) { document.getElementById("lockBg").style.display = "flex"; return; }
   let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TurniPro//IT\n";
   dati.forEach(t => {
     let d = t.iso.replace(/-/g, ""), nf = t.fest ? " ["+t.fest+"]" : "";
