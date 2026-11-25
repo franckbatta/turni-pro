@@ -74,13 +74,13 @@ window.onload = () => {
   if (localStorage.getItem("tpTheme") === "dark") {
     document.body.classList.add("dark");
     document.getElementById("themeBtn").innerText = "☀️";
-    if (p.dur) document.getElementById("durata").value = p.dur;
   }
   const s = localStorage.getItem("tpDB");
   if (s) {
     const p = JSON.parse(s);
     if (p.sc) document.getElementById("sc").value = p.sc;
     if (p.sd) document.getElementById("sd").value = p.sd;
+    if (p.dur) document.getElementById("durata").value = p.dur;
     if (p.o1) document.getElementById("o1").value = p.o1;
     if (p.o2) document.getElementById("o2").value = p.o2;
     if (p.o3) document.getElementById("o3").value = p.o3;
@@ -92,6 +92,7 @@ window.onload = () => {
     if (dati.length) startView(true);
   }
 };
+
 
 function saveDB() {
   localStorage.setItem("tpDB", JSON.stringify({
