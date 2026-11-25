@@ -40,7 +40,10 @@
   input[type="color"] { padding: 2px; height: 38px; cursor: pointer; }
   .col-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-top: 4px; }
   .col-grid span { font-size: 11px; font-weight: bold; color: var(--sub); }
-  .btn { background: #2563eb; color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+  .btn { background: #2563eb; color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 rgba(0,0,0,0.28); transition: transform 0.08s, box-shadow 0.08s; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.28); }
+  .top button { background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 3px 0 rgba(0,0,0,0.25); transition: transform 0.08s, box-shadow 0.08s; }
+  .top button:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.25); }
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
   .modal { background: var(--card); color: var(--text); padding: 18px; border-radius: 12px; width: 85%; max-width: 320px; border: 1px solid var(--border); }
 </style>
