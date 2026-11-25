@@ -118,6 +118,23 @@
   </div>
 </div>
 
+<div class="modal-bg" id="helpBg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;font-size:13px;line-height:1.5;text-align:left;">
+    <h3 style="margin:0 0 10px 0;">Guida Rapida - Turni Pro</h3>
+    <p><strong>1. Crea il tuo ciclo:</strong><br>
+    Apri <em>Impostazioni</em> e scrivi la tua sequenza separata da virgole usando numero + codice (<code>1T</code> Mattina, <code>2T</code> Pomeriggio, <code>3T</code> Notte, <code>R</code> Riposo).<br>
+    <em>Esempio:</em> <code>6 1T, 1 R, 4 3T, 2 R</code></p>
+    <p><strong>2. Data di inizio e colori:</strong><br>
+    Imposta il giorno in cui inizia il <strong>1° giorno</strong> della tua sequenza, scegli gli orari e i colori preferiti, poi premi <em>Genera 12 Mesi</em>.</p>
+    <p><strong>3. Straordinari e cambi turno:</strong><br>
+    Tocca qualsiasi giorno del calendario per aggiungere ore di straordinario o modificare manualmente il turno. Il conteggio in alto si aggiorna in automatico.</p>
+    <p><strong>4. Esporta su Google / Apple Calendar:</strong><br>
+    Premi il pulsante verde <em>Esporta (.ics)</em> per scaricare il file dei turni e aprirlo direttamente nel calendario dello smartphone.</p>
+    <button class="btn" onclick="document.getElementById('helpBg').style.display='none'">Ho capito</button>
+  </div>
+</div>
+  
+
 
 
 <script src="app.js"></script>
