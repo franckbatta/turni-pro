@@ -154,7 +154,7 @@ function draw() {
     if (t.tipo !== "R") { ord += oreGiorno; if (t.fest || t.dow === 6) fest += oreGiorno; }
     ext += t.ext;
     let bg = colori[t.tipo] || "#64748b";
-    gr.innerHTML += '<div class="cell '+(t.fest?'fest':'')+'" onclick="openMod('+t.idx+')"><div style="font-size:12px;font-weight:bold;">'+t.d+'</div><div class="pill" style="background:'+bg+'">'+t.tipo+'</div>'+(t.ext>0?'<div class="ext">+'+t.ext+'h</div>':'<div></div>')+'</div>';
+    gr.innerHTML += '<div class="cell '+(t.fest?'fest':'')+'" onclick="openMod('+t.idx+')"><div style="font-size:12px;font-weight:bold;">'+t.d+'</div><div class="pill" style="background:'+bg+'">'+t.tipo+'</div>'+(t.ext>0?'<div class="ext">+'+t.ext+'h S</div>':'<div></div>')+'</div>';
   });
   document.getElementById("sOrd").innerHTML = ord + "h<span>Ordinarie</span>";
   document.getElementById("sExt").innerHTML = ext + "h<span>Extra</span>";
