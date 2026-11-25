@@ -177,7 +177,10 @@ function salvaMod() {
 }
 
 function esporta() {
-  if (isExpired()) { document.getElementById("lockBg").style.display = "flex"; return; }
+  if (localStorage.getItem("tpUnlocked") !== "true") {
+    document.getElementById("lockBg").style.display = "flex";
+    return;
+  }
   let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TurniPro//IT\n";
   dati.forEach(t => {
     let d = t.iso.replace(/-/g, ""), nf = t.fest ? " ["+t.fest+"]" : "";
@@ -196,3 +199,4 @@ function esporta() {
   a.download = "turni_pro.ics";
   a.click();
 }
+
