@@ -53,7 +53,8 @@ function getColorMap() {
     "1T": document.getElementById("c1").value,
     "2T": document.getElementById("c2").value,
     "3T": document.getElementById("c3").value,
-    "R":  document.getElementById("cR").value
+    "R":  document.getElementById("cR").value,
+    "S":  document.getElementById("cS").value
   };
 }
 
@@ -80,6 +81,7 @@ window.onload = () => {
     const p = JSON.parse(s);
     if (p.sc) document.getElementById("sc").value = p.sc;
     if (p.sd) document.getElementById("sd").value = p.sd;
+    if (p.cS) document.getElementById("cS").value = p.cS;
     if (p.dur) document.getElementById("durata").value = p.dur;
     if (p.o1) document.getElementById("o1").value = p.o1;
     if (p.o2) document.getElementById("o2").value = p.o2;
@@ -96,6 +98,7 @@ window.onload = () => {
 
 function saveDB() {
   localStorage.setItem("tpDB", JSON.stringify({
+    cS: document.getElementById("cS").value,
     sc: document.getElementById("sc").value, sd: document.getElementById("sd").value, dur: document.getElementById("durata").value,
     o1: document.getElementById("o1").value, o2: document.getElementById("o2").value, o3: document.getElementById("o3").value,
     c1: document.getElementById("c1").value, c2: document.getElementById("c2").value, c3: document.getElementById("c3").value, cR: document.getElementById("cR").value,
@@ -151,11 +154,13 @@ function draw() {
   let ord = 0, ext = 0, fest = 0;
   list.forEach(t => {
     let oreGiorno = getMinutiTurno(t.tipo) / 60;
-    if (t.tipo !== "R") { ord += oreGiorno; if (t.fest || t.dow === 6) fest += oreGiorno; }
+    if (t.tipo === "S") { ext += 8; if (t.fest || t.dow === 6) fest += 8; }
+    else if (t.tipo !== "R") { ord += oreGiorno; if (t.fest || t.dow === 6) fest += oreGiorno; }
     ext += t.ext;
     let bg = colori[t.tipo] || "#64748b";
     gr.innerHTML += '<div class="cell '+(t.fest?'fest':'')+'" onclick="openMod('+t.idx+')"><div style="font-size:12px;font-weight:bold;">'+t.d+'</div><div class="pill" style="background:'+bg+'">'+t.tipo+'</div>'+(t.ext>0?'<div class="ext">+'+t.ext+'h S</div>':'<div></div>')+'</div>';
   });
+
   document.getElementById("sOrd").innerHTML = ord + "h<span>Ordinarie</span>";
   document.getElementById("sExt").innerHTML = ext + "h<span>Extra</span>";
   document.getElementById("sFest").innerHTML = fest + "h<span>Festive</span>";
@@ -202,6 +207,9 @@ function esporta() {
     let d = t.iso.replace(/-/g, ""), nf = t.fest ? " ["+t.fest+"]" : "";
     if (t.tipo === "R") {
       ics += "BEGIN:VEVENT\nDTSTART;VALUE=DATE:"+d+"\nSUMMARY:"+(t.ext>0?"R (Extra "+t.ext+"h)":"R")+nf+"\nEND:VEVENT\n";
+    } else if (t.tipo === "S") {
+      let dur = (8 + t.ext) * 60;
+      ics += "BEGIN:VEVENT\nDTSTART:"+d+"T070000\nDURATION:PT"+dur+"M\nSUMMARY:Straordinario (S)"+(t.ext>0?" + "+t.ext+"h":"")+nf+"\nEND:VEVENT\n";
     } else {
       let orarioStr = document.getElementById("o" + t.tipo.charAt(0)).value;
       let ini = orarioStr.split("-")[0].trim().replace(":", "") + "00";
@@ -215,5 +223,6 @@ function esporta() {
   a.download = "turni_pro.ics";
   a.click();
 }
+
 
 
