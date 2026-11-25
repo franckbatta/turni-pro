@@ -74,6 +74,7 @@ window.onload = () => {
   if (localStorage.getItem("tpTheme") === "dark") {
     document.body.classList.add("dark");
     document.getElementById("themeBtn").innerText = "☀️";
+    if (p.dur) document.getElementById("durata").value = p.dur;
   }
   const s = localStorage.getItem("tpDB");
   if (s) {
@@ -94,7 +95,7 @@ window.onload = () => {
 
 function saveDB() {
   localStorage.setItem("tpDB", JSON.stringify({
-    sc: document.getElementById("sc").value, sd: document.getElementById("sd").value,
+    sc: document.getElementById("sc").value, sd: document.getElementById("sd").value, dur: document.getElementById("durata").value,
     o1: document.getElementById("o1").value, o2: document.getElementById("o2").value, o3: document.getElementById("o3").value,
     c1: document.getElementById("c1").value, c2: document.getElementById("c2").value, c3: document.getElementById("c3").value, cR: document.getElementById("cR").value,
     dati
@@ -115,7 +116,8 @@ function genera() {
   if (!y) return alert("Data mancante!");
   const start = new Date(y, m-1, g);
   dati = [];
-  for (let i = 0; i < 365; i++) {
+    const giorniTotali = parseInt(document.getElementById("durata").value, 10) || 365;
+    for (let i = 0; i < giorniTotali; i++) {
     let dt = new Date(start); dt.setDate(start.getDate() + i);
     let yy = dt.getFullYear(), mm = String(dt.getMonth()+1).padStart(2,'0'), dd = String(dt.getDate()).padStart(2,'0');
     dati.push({ idx: i, y: yy, m: dt.getMonth(), d: dt.getDate(), dow: (dt.getDay()+6)%7, iso: yy+"-"+mm+"-"+dd, mese: yy+"-"+mm, tipo: ciclo[i%ciclo.length], fest: getFest(dt), ext: 0 });
@@ -147,7 +149,8 @@ function draw() {
   for (let i = 0; i < off; i++) gr.innerHTML += '<div class="cell empty"></div>';
   let ord = 0, ext = 0, fest = 0;
   list.forEach(t => {
-    if (t.tipo !== "R") { ord += 8; if (t.fest || t.dow === 6) fest += 8; }
+    let oreGiorno = getMinutiTurno(t.tipo) / 60;
+    if (t.tipo !== "R") { ord += oreGiorno; if (t.fest || t.dow === 6) fest += oreGiorno; }
     ext += t.ext;
     let bg = colori[t.tipo] || "#64748b";
     gr.innerHTML += '<div class="cell '+(t.fest?'fest':'')+'" onclick="openMod('+t.idx+')"><div style="font-size:12px;font-weight:bold;">'+t.d+'</div><div class="pill" style="background:'+bg+'">'+t.tipo+'</div>'+(t.ext>0?'<div class="ext">+'+t.ext+'h</div>':'<div></div>')+'</div>';
@@ -176,6 +179,18 @@ function salvaMod() {
   draw();
 }
 
+function getMinutiTurno(tipo) {
+  if (tipo === "R") return 0;
+  let el = document.getElementById("o" + tipo.charAt(0));
+  if (!el) return 480;
+  let parti = el.value.split("-");
+  if (parti.length !== 2) return 480;
+  let [h1, m1] = parti[0].trim().split(":").map(Number);
+  let [h2, m2] = parti[1].trim().split(":").map(Number);
+  if (isNaN(h1) || isNaN(h2)) return 480;
+  return ((h2 * 60 + (m2 || 0)) - (h1 * 60 + (m1 || 0)) + 1440) % 1440 || 480;
+}
+
 function esporta() {
   if (localStorage.getItem("tpUnlocked") !== "true") {
     document.getElementById("lockBg").style.display = "flex";
@@ -188,8 +203,8 @@ function esporta() {
       ics += "BEGIN:VEVENT\nDTSTART;VALUE=DATE:"+d+"\nSUMMARY:"+(t.ext>0?"R (Extra "+t.ext+"h)":"R")+nf+"\nEND:VEVENT\n";
     } else {
       let orarioStr = document.getElementById("o" + t.tipo.charAt(0)).value;
-      let ini = orarioStr.split("-").shift().trim().replace(":", "") + "00";
-      let dur = (8 + t.ext) * 60;
+      let ini = orarioStr.split("-")[0].trim().replace(":", "") + "00";
+      let dur = getMinutiTurno(t.tipo) + (t.ext * 60);
       ics += "BEGIN:VEVENT\nDTSTART:"+d+"T"+ini+"\nDURATION:PT"+dur+"M\nSUMMARY:Turno "+t.tipo+(t.ext>0?" + "+t.ext+"h Extra":"")+nf+"\nEND:VEVENT\n";
     }
   });
@@ -199,4 +214,5 @@ function esporta() {
   a.download = "turni_pro.ics";
   a.click();
 }
+
 
