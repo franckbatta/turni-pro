@@ -80,14 +80,16 @@
     </div>
 
     <label>Colori personalizzati:</label>
-    <div class="col-grid">
+    <div class="col-grid" style="grid-template-columns: repeat(5, 1fr);">
       <div><span>1T</span><input type="color" id="c1" value="#10b981" onchange="aggiornaColori()"></div>
       <div><span>2T</span><input type="color" id="c2" value="#f59e0b" onchange="aggiornaColori()"></div>
       <div><span>3T</span><input type="color" id="c3" value="#475569" onchange="aggiornaColori()"></div>
       <div><span>R</span><input type="color" id="cR" value="#94a3b8" onchange="aggiornaColori()"></div>
+      <div><span>S</span><input type="color" id="cS" value="#8b5cf6" onchange="aggiornaColori()"></div>
     </div>
     <button class="btn" onclick="genera()">Genera Turni</button>
   </div>
+
 
   <div id="mainView" style="display:none;">
     <div class="card stats">
@@ -110,12 +112,13 @@
     <h4 id="mData" style="margin:0;"></h4>
     <div id="mFest" style="color:#ef4444;font-size:12px;font-weight:bold;"></div>
     <label>Turno:</label>
-    <select id="mTipo"><option value="1T">1T</option><option value="2T">2T</option><option value="3T">3T</option><option value="R">R</option></select>
+    <select id="mTipo"><option value="1T">1T</option><option value="2T">2T</option><option value="3T">3T</option><option value="R">R</option><option value="S">S (Straordinario)</option></select>
     <label>Ore Extra:</label>
     <input type="number" id="mExt" min="0" max="12" step="0.5">
     <button class="btn" onclick="salvaMod()">Salva</button>
   </div>
 </div>
+
 
 <div id="trialBanner" style="background:#fef3c7;color:#92400e;text-align:center;font-size:12px;font-weight:bold;padding:6px;display:none;"></div>
 
