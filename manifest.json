@@ -1,17 +1,35 @@
 {
+  "id": "/turni-pro/",
   "name": "Turni Pro - Gestione Turni",
   "short_name": "Turni Pro",
-  "start_url": "./index.html",
+  "description": "Gestione turni di lavoro a ciclo continuo con festivi, straordinari ed esportazione calendari.",
+  "start_url": "/turni-pro/index.html",
+  "scope": "/turni-pro/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
   "orientation": "portrait",
+  "categories": ["productivity", "business"],
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "/turni-pro/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/turni-pro/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/turni-pro/screen1.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ]
 }

@@ -51,7 +51,7 @@
 <body>
 
 <div class="top">
-  <span onclick="this.c=(this.c||0)+1;if(this.c===10){this.c=0;let u=localStorage.getItem('tpUnlocked')==='true';localStorage.setItem('tpUnlocked',!u);alert(!u?'Modalità Test Sbloccata':'Modalità Prova Ripristinata');location.reload();}">Turni Pro</span>
+  <span>Turni Pro</span>
   <div class="top-btns">
     <button onclick="document.getElementById('helpBg').style.display='flex'">?</button>
     <button id="themeBtn" onclick="toggleTheme()">🌙</button>
@@ -72,23 +72,27 @@
         <option value="365" selected>1 Anno (365 gg)</option>
       </select>
     </div>
-    <label>Orari 1T / 2T / 3T:</label>
-    <div style="display:flex;gap:5px;">
-      <input type="text" id="o1" value="07:00-15:00">
-      <input type="text" id="o2" value="15:00-23:00">
-      <input type="text" id="o3" value="23:00-07:00">
+        <label>Orari 1T / 2T / 3T / G (Giornata):</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      <input type="text" id="o1" value="07:00-15:00" placeholder="1T">
+      <input type="text" id="o2" value="15:00-23:00" placeholder="2T">
+      <input type="text" id="o3" value="23:00-07:00" placeholder="3T">
+      <input type="text" id="oG" value="08:00-17:00" placeholder="G (Giornata)">
     </div>
 
+
     <label>Colori personalizzati:</label>
-    <div class="col-grid" style="grid-template-columns: repeat(5, 1fr);">
+    <div class="col-grid" style="grid-template-columns: repeat(4, 1fr);">
       <div><span>1T</span><input type="color" id="c1" value="#10b981" onchange="aggiornaColori()"></div>
       <div><span>2T</span><input type="color" id="c2" value="#f59e0b" onchange="aggiornaColori()"></div>
       <div><span>3T</span><input type="color" id="c3" value="#475569" onchange="aggiornaColori()"></div>
+      <div><span>G</span><input type="color" id="cG" value="#0ea5e9" onchange="aggiornaColori()"></div>
       <div><span>R</span><input type="color" id="cR" value="#94a3b8" onchange="aggiornaColori()"></div>
       <div><span>S</span><input type="color" id="cS" value="#8b5cf6" onchange="aggiornaColori()"></div>
+      <div><span>F</span><input type="color" id="cF" value="#ec4899" onchange="aggiornaColori()"></div>
+      <div><span>M</span><input type="color" id="cM" value="#ef4444" onchange="aggiornaColori()"></div>
     </div>
-    <button class="btn" onclick="genera()">Genera Turni</button>
-  </div>
+
 
 
   <div id="mainView" style="display:none;">
@@ -112,7 +116,16 @@
     <h4 id="mData" style="margin:0;"></h4>
     <div id="mFest" style="color:#ef4444;font-size:12px;font-weight:bold;"></div>
     <label>Turno:</label>
-    <select id="mTipo"><option value="1T">1T</option><option value="2T">2T</option><option value="3T">3T</option><option value="R">R</option><option value="S">S (Straordinario)</option></select>
+    <select id="mTipo">
+      <option value="1T">1T (Mattina)</option>
+      <option value="2T">2T (Pomeriggio)</option>
+      <option value="3T">3T (Notte)</option>
+      <option value="G">G (Giornata)</option>
+      <option value="R">R (Riposo)</option>
+      <option value="S">S (Straordinario)</option>
+      <option value="F">F (Ferie)</option>
+      <option value="M">M (Malattia)</option>
+    </select>
     <label>Ore Extra:</label>
     <input type="number" id="mExt" min="0" max="12" step="0.5">
     <button class="btn" onclick="salvaMod()">Salva</button>
@@ -136,17 +149,18 @@
   <div class="modal" style="max-height:80vh;overflow-y:auto;font-size:13px;line-height:1.5;text-align:left;">
     <h3 style="margin:0 0 10px 0;">Guida Rapida - Turni Pro</h3>
     <p><strong>1. Crea il tuo ciclo:</strong><br>
-    Apri <em>Impostazioni</em> e scrivi la tua sequenza separata da virgole usando numero + codice (<code>1T</code> Mattina, <code>2T</code> Pomeriggio, <code>3T</code> Notte, <code>R</code> Riposo).<br>
+    Apri <em>Impostazioni</em> e scrivi la tua sequenza separata da virgole usando numero + codice (<code>1T</code> Mattina, <code>2T</code> Pomeriggio, <code>3T</code> Notte, <code>G</code> Giornata, <code>R</code> Riposo, <code>S</code> Straordinario, <code>F</code> Ferie, <code>M</code> Malattia).<br>
     <em>Esempio:</em> <code>6 1T, 1 R, 4 3T, 2 R</code></p>
-    <p><strong>2. Data di inizio e colori:</strong><br>
-    Imposta il giorno in cui inizia il <strong>1° giorno</strong> della tua sequenza, scegli gli orari e i colori preferiti, poi premi <em>Genera 12 Mesi</em>.</p>
-    <p><strong>3. Straordinari e cambi turno:</strong><br>
-    Tocca qualsiasi giorno del calendario per aggiungere ore di straordinario o modificare manualmente il turno. Il conteggio in alto si aggiorna in automatico.</p>
+    <p><strong>2. Data di inizio, durata e colori:</strong><br>
+    Imposta il giorno in cui inizia il <strong>1° giorno</strong> della tua sequenza, scegli la durata, gli orari e i colori preferiti, poi premi <em>Genera Turni</em>.</p>
+    <p><strong>3. Straordinari, ferie e cambi turno:</strong><br>
+    Tocca qualsiasi giorno del calendario per aggiungere ore di straordinario o modificare manualmente il turno (es. Ferie, Malattia o Straordinario). Il conteggio in alto si aggiorna in automatico.</p>
     <p><strong>4. Esporta su Google / Apple Calendar:</strong><br>
     Premi il pulsante verde <em>Esporta (.ics)</em> per scaricare il file dei turni e aprirlo direttamente nel calendario dello smartphone.</p>
     <button class="btn" onclick="document.getElementById('helpBg').style.display='none'">Ho capito</button>
   </div>
 </div>
+
   
 
 

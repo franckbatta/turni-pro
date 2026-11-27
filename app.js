@@ -23,7 +23,6 @@ function avviaAcquisto() {
   alert("Collegamento allo Store per lo sblocco definitivo (2,99 €).");
 }
 
-
 function parseSchema(t) {
   let s = [];
   for (let p of t.toUpperCase().split(",")) {
@@ -31,7 +30,7 @@ function parseSchema(t) {
     if (parti.length !== 2) return null;
     let qta = parseInt(parti.shift(), 10);
     let tipo = parti.pop();
-    if (isNaN(qta) || !["1T", "2T", "3T", "R"].includes(tipo)) return null;
+    if (isNaN(qta) || !["1T", "2T", "3T", "G", "R", "S", "F", "M"].includes(tipo)) return null;
     for (let i = 0; i < qta; i++) s.push(tipo);
   }
   return s.length ? s : null;
@@ -53,10 +52,14 @@ function getColorMap() {
     "1T": document.getElementById("c1").value,
     "2T": document.getElementById("c2").value,
     "3T": document.getElementById("c3").value,
+    "G":  document.getElementById("cG").value,
     "R":  document.getElementById("cR").value,
-    "S":  document.getElementById("cS").value
+    "S":  document.getElementById("cS").value,
+    "F":  document.getElementById("cF").value,
+    "M":  document.getElementById("cM").value
   };
 }
+
 
 function aggiornaColori() {
   saveDB();
@@ -67,6 +70,10 @@ function toggleTheme() {
   const isDark = document.body.classList.toggle("dark");
   document.getElementById("themeBtn").innerText = isDark ? "☀️" : "🌙";
   localStorage.setItem("tpTheme", isDark ? "dark" : "light");
+}
+
+function roundOre(val) {
+  return Math.round(val * 100) / 100;
 }
 
 window.onload = () => {
@@ -90,21 +97,25 @@ window.onload = () => {
     if (p.c2) document.getElementById("c2").value = p.c2;
     if (p.c3) document.getElementById("c3").value = p.c3;
     if (p.cR) document.getElementById("cR").value = p.cR;
+	if (p.oG) document.getElementById("oG").value = p.oG; 
+    if (p.cG) document.getElementById("cG").value = p.cG; 
+    if (p.cF) document.getElementById("cF").value = p.cF; 
+    if (p.cM) document.getElementById("cM").value = p.cM;
     dati = p.dati || [];
     if (dati.length) startView(true);
   }
 };
 
-
 function saveDB() {
   localStorage.setItem("tpDB", JSON.stringify({
-    cS: document.getElementById("cS").value,
     sc: document.getElementById("sc").value, sd: document.getElementById("sd").value, dur: document.getElementById("durata").value,
-    o1: document.getElementById("o1").value, o2: document.getElementById("o2").value, o3: document.getElementById("o3").value,
-    c1: document.getElementById("c1").value, c2: document.getElementById("c2").value, c3: document.getElementById("c3").value, cR: document.getElementById("cR").value,
+    o1: document.getElementById("o1").value, o2: document.getElementById("o2").value, o3: document.getElementById("o3").value, oG: document.getElementById("oG").value,
+    c1: document.getElementById("c1").value, c2: document.getElementById("c2").value, c3: document.getElementById("c3").value, cG: document.getElementById("cG").value,
+    cR: document.getElementById("cR").value, cS: document.getElementById("cS").value, cF: document.getElementById("cF").value, cM: document.getElementById("cM").value,
     dati
   }));
 }
+
 
 function toggleSet() {
   if (!dati.length) return;
@@ -120,8 +131,8 @@ function genera() {
   if (!y) return alert("Data mancante!");
   const start = new Date(y, m-1, g);
   dati = [];
-    const giorniTotali = parseInt(document.getElementById("durata").value, 10) || 365;
-    for (let i = 0; i < giorniTotali; i++) {
+  const giorniTotali = parseInt(document.getElementById("durata").value, 10) || 365;
+  for (let i = 0; i < giorniTotali; i++) {
     let dt = new Date(start); dt.setDate(start.getDate() + i);
     let yy = dt.getFullYear(), mm = String(dt.getMonth()+1).padStart(2,'0'), dd = String(dt.getDate()).padStart(2,'0');
     dati.push({ idx: i, y: yy, m: dt.getMonth(), d: dt.getDate(), dow: (dt.getDay()+6)%7, iso: yy+"-"+mm+"-"+dd, mese: yy+"-"+mm, tipo: ciclo[i%ciclo.length], fest: getFest(dt), ext: 0 });
@@ -155,15 +166,15 @@ function draw() {
   list.forEach(t => {
     let oreGiorno = getMinutiTurno(t.tipo) / 60;
     if (t.tipo === "S") { ext += 8; if (t.fest || t.dow === 6) fest += 8; }
-    else if (t.tipo !== "R") { ord += oreGiorno; if (t.fest || t.dow === 6) fest += oreGiorno; }
+    else if (!["R", "F", "M"].includes(t.tipo)) { ord += oreGiorno; if (t.fest || t.dow === 6) fest += oreGiorno; }
     ext += t.ext;
     let bg = colori[t.tipo] || "#64748b";
     gr.innerHTML += '<div class="cell '+(t.fest?'fest':'')+'" onclick="openMod('+t.idx+')"><div style="font-size:12px;font-weight:bold;">'+t.d+'</div><div class="pill" style="background:'+bg+'">'+t.tipo+'</div>'+(t.ext>0?'<div class="ext">+'+t.ext+'h S</div>':'<div></div>')+'</div>';
   });
 
-  document.getElementById("sOrd").innerHTML = ord + "h<span>Ordinarie</span>";
-  document.getElementById("sExt").innerHTML = ext + "h<span>Extra</span>";
-  document.getElementById("sFest").innerHTML = fest + "h<span>Festive</span>";
+  document.getElementById("sOrd").innerHTML = roundOre(ord) + "h<span>Ordinarie</span>";
+  document.getElementById("sExt").innerHTML = roundOre(ext) + "h<span>Extra</span>";
+  document.getElementById("sFest").innerHTML = roundOre(fest) + "h<span>Festive</span>";
 }
 
 function openMod(i) {
@@ -179,15 +190,16 @@ function openMod(i) {
 
 function salvaMod() {
   dati[cur].tipo = document.getElementById("mTipo").value;
-  dati[cur].ext = parseFloat(document.getElementById("mExt").value) || 0;
+  dati[cur].ext = Math.max(0, parseFloat(document.getElementById("mExt").value) || 0);
   saveDB();
   document.getElementById("mBg").style.display = "none";
   draw();
 }
 
 function getMinutiTurno(tipo) {
-  if (tipo === "R") return 0;
-  let el = document.getElementById("o" + tipo.charAt(0));
+  if (["R", "F", "M"].includes(tipo)) return 0;
+  let idEl = tipo === "G" ? "oG" : "o" + tipo.charAt(0);
+  let el = document.getElementById(idEl);
   if (!el) return 480;
   let parti = el.value.split("-");
   if (parti.length !== 2) return 480;
@@ -197,25 +209,31 @@ function getMinutiTurno(tipo) {
   return ((h2 * 60 + (m2 || 0)) - (h1 * 60 + (m1 || 0)) + 1440) % 1440 || 480;
 }
 
+
 function esporta() {
   if (localStorage.getItem("tpUnlocked") !== "true") {
     document.getElementById("lockBg").style.display = "flex";
     return;
   }
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TurniPro//IT\n";
-  dati.forEach(t => {
+  dati.forEach((t, idx) => {
     let d = t.iso.replace(/-/g, ""), nf = t.fest ? " ["+t.fest+"]" : "";
-    if (t.tipo === "R") {
-      ics += "BEGIN:VEVENT\nDTSTART;VALUE=DATE:"+d+"\nSUMMARY:"+(t.ext>0?"R (Extra "+t.ext+"h)":"R")+nf+"\nEND:VEVENT\n";
+    let uid = "turnipro-" + d + "-" + idx + "@turnipro.local";
+    if (["R", "F", "M"].includes(t.tipo)) {
+      let nomeEv = t.tipo === "F" ? "Ferie (F)" : (t.tipo === "M" ? "Malattia (M)" : "Riposo (R)");
+      ics += "BEGIN:VEVENT\nUID:"+uid+"\nDTSTAMP:"+stamp+"\nDTSTART;VALUE=DATE:"+d+"\nSUMMARY:"+nomeEv+(t.ext>0?" (Extra "+t.ext+"h)":"")+nf+"\nEND:VEVENT\n";
     } else if (t.tipo === "S") {
-      let dur = (8 + t.ext) * 60;
-      ics += "BEGIN:VEVENT\nDTSTART:"+d+"T070000\nDURATION:PT"+dur+"M\nSUMMARY:Straordinario (S)"+(t.ext>0?" + "+t.ext+"h":"")+nf+"\nEND:VEVENT\n";
+      let dur = Math.round((8 + t.ext) * 60);
+      ics += "BEGIN:VEVENT\nUID:"+uid+"\nDTSTAMP:"+stamp+"\nDTSTART:"+d+"T070000\nDURATION:PT"+dur+"M\nSUMMARY:Straordinario (S)"+(t.ext>0?" + "+t.ext+"h":"")+nf+"\nEND:VEVENT\n";
     } else {
-      let orarioStr = document.getElementById("o" + t.tipo.charAt(0)).value;
+      let idEl = t.tipo === "G" ? "oG" : "o" + t.tipo.charAt(0);
+      let orarioStr = document.getElementById(idEl).value;
       let ini = orarioStr.split("-")[0].trim().replace(":", "") + "00";
-      let dur = getMinutiTurno(t.tipo) + (t.ext * 60);
-      ics += "BEGIN:VEVENT\nDTSTART:"+d+"T"+ini+"\nDURATION:PT"+dur+"M\nSUMMARY:Turno "+t.tipo+(t.ext>0?" + "+t.ext+"h Extra":"")+nf+"\nEND:VEVENT\n";
+      let dur = Math.round(getMinutiTurno(t.tipo) + (t.ext * 60));
+      ics += "BEGIN:VEVENT\nUID:"+uid+"\nDTSTAMP:"+stamp+"\nDTSTART:"+d+"T"+ini+"\nDURATION:PT"+dur+"M\nSUMMARY:Turno "+t.tipo+(t.ext>0?" + "+t.ext+"h Extra":"")+nf+"\nEND:VEVENT\n";
     }
+
   });
   ics += "END:VCALENDAR";
   const a = document.createElement("a");
@@ -223,6 +241,3 @@ function esporta() {
   a.download = "turni_pro.ics";
   a.click();
 }
-
-
-
